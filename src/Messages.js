@@ -31,7 +31,7 @@ export default class Messages {
         this.sortby = 'Sort by:';
         this.backToList = 'Back to List';
         this.loadmore = 'Load more';
-        this.statusBar = ['test', 'test2'];
+        this.statusBar = ['test', 'test2', 'test3', 'test4'];
         this.trackPackage = 'Track package';
         this.futureMsg = 'Text to be confirmed';
         this.created = 'SUBMITTED';

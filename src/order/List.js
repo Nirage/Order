@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 // Imported order files
-import OrderSingle from './order-single';
-import Msg from './Messages';
+import OrderSingle from './Single';
+import Msg from '../Messages';
+import '../scss/Order.scss';
 
 export default class List extends Component {
     constructor(props) {
@@ -16,7 +17,6 @@ export default class List extends Component {
         // Media Query
         this.mq = window.matchMedia('(min-width: 1024px)');
         this.msg = new Msg();
-        console.log(this.msg);
         // State
         this.state = {
             results: [],
@@ -47,9 +47,10 @@ export default class List extends Component {
             ignorePageNumber
         };
 
-        fetch(`/my-account/orders/switchview?${qs.stringify(param)}`)
+        fetch(`./orderData.json?${qs.stringify(param)}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 const { results, sorts, pagination } = data;
                 const { currentPage, pageSize, totalNumberOfResults } = pagination;
                 const checkCancelled = results.filter(order => order.orderDetails).map(order => {
@@ -68,7 +69,6 @@ export default class List extends Component {
                     totalNumberOfResults,
                     hasCancelled: checkCancelled.indexOf(true) > -1
                 }));
-                console.log(data);
             })
             .catch(error => {
                 console.error('Requestfailed', error);

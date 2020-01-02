@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Imported order files
-import Msg from './Messages';
+import Msg from '../Messages';
 
 export default class Details extends Component {
     constructor(){

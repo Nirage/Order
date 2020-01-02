@@ -1,0 +1,58 @@
+// Variables
+
+//== Colors
+$white: #fff;
+
+//## Gray and brand colors for use across Bootstrap.
+$gray-base:              #000;
+$gray-darker:            lighten($gray-base, 13.5%); // #222
+$gray-dark:              lighten($gray-base, 20%);   // #333
+$gray:                   lighten($gray-base, 33.5%); // #555
+$gray-light:             lighten($gray-base, 46.7%); // #777
+$gray-lighter:           lighten($gray-base, 93.5%); // #eee
+
+$brand-primary:         darken(#428bca, 6.5%); // #337ab7
+$brand-success:         #5cb85c;
+$brand-info:            #5bc0de;
+$brand-warning:         #f0ad4e;
+$brand-danger:          #d9534f;
+
+//** Default background color used for all tables.
+$table-bg:               transparent;
+$kbd-bg:                 #333;
+$gray-border:            #ccc;
+$color-dark-blue:        #24387F;
+$color-light-blue:       #009DDC;
+
+//** Fonts
+$font-size-base:          18px;
+$font-size-base-2:        16px;
+$font-size-base-3:        15px;
+$font-size-small:         ceil(($font-size-base * 0.92)); // ~13px
+$font-size-large-1:       ceil(($font-size-base * 1.22)); // ~22px
+$font-size-large-2:       ceil(($font-size-base * 1.55)); // ~28px
+$font-size-large-3:       ceil(($font-size-base * 1.1667)); // ~30px
+$font-size-large-4:       ceil(($font-size-base * 1.055)); // ~19px
+$font-size-large-5:       ceil(($font-size-base * 1.38)); // ~25px
+
+// Small screen / tablet
+//** Deprecated `$screen-sm` as of v3.0.1
+$screen-sm:                  768px;
+$screen-sm-min:              $screen-sm;
+
+// Medium screen / desktop
+//** Deprecated `$screen-md` as of v3.0.1
+$screen-md:                  992px;
+$screen-md-min:              $screen-md;
+
+// Large screen / wide desktop
+//** Deprecated `$screen-lg` as of v3.0.1
+$screen-lg:                  1200px;
+$screen-lg-min:              $screen-lg;
+//** Deprecated `$screen-lg-desktop` as of v3.0.1
+$screen-lg-desktop:          $screen-lg-min;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm-min - 1);
+$screen-sm-max:              ($screen-md-min - 1);
+$screen-md-max:              ($screen-lg-min - 1);

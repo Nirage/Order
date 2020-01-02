@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import './index.css';
+import './scss/index.scss';
 // intersection-observerimport App from './App';
 import * as serviceWorker from './serviceWorker';
 // Imported order files
-import OrderList from './order-list';
+import OrderList from './order/List';
 // Polyfills
 import 'whatwg-fetch';
 import 'promise-polyfill/src/polyfill';
@@ -35,7 +35,7 @@ class Order extends Component {
         ReactDOM.render(
             <BrowserRouter>
                 <Switch>
-                    <Route path="/" render={props => <OrderList {...props} {...this.state} />} />
+                    <Route exact path="/" render={props => <OrderList {...props} {...this.state} />} />
                 </Switch>
             </BrowserRouter>,
             this.orderHistory

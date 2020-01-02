@@ -1,0 +1,384 @@
+$icomoon-font-family: "cc-font";
+$icomoon-font-path: "fonts";
+
+$cc-icon-call: "\e900";
+$cc-icon-documentation: "\e901";
+$cc-icon-email: "\e902";
+$cc-icon-faq: "\e903";
+$cc-icon-guidednav: "\e904";
+$cc-icon-personaldetails: "\e905";
+$cc-icon-account_d: "\e906";
+$cc-icon-account_m: "\e907";
+$cc-icon-add: "\e908";
+$cc-icon-basket_d: "\e909";
+$cc-icon-basket_m: "\e90a";
+$cc-icon-caretdown_b: "\e90b";
+$cc-icon-caretdown_l: "\e90c";
+$cc-icon-caretleft_b: "\e90d";
+$cc-icon-caretleft_l: "\e90e";
+$cc-icon-caretright_b: "\e90f";
+$cc-icon-caretright_l: "\e910";
+$cc-icon-caretup_b: "\e911";
+$cc-icon-caretup_l: "\e912";
+$cc-icon-close_l: "\e913";
+$cc-icon-close_m: "\e914";
+$cc-icon-contact: "\e915";
+$cc-icon-customerdocumentation: "\e916";
+$cc-icon-datepicker: "\e917";
+$cc-icon-edit: "\e918";
+$cc-icon-faq1: "\e919";
+$cc-icon-fielderror: "\e91a";
+$cc-icon-fieldnoneditable: "\e91b";
+$cc-icon-fieldvalid: "\e91c";
+$cc-icon-inputhide: "\e91d";
+$cc-icon-inputreveal: "\e91e";
+$cc-icon-langcaretdown_d: "\e91f";
+$cc-icon-menu_m: "\e920";
+$cc-icon-open_m: "\e921";
+$cc-icon-orderhistory: "\e922";
+$cc-icon-pageerror-path1: "\e923";
+$cc-icon-pageerror-path2: "\e924";
+$cc-icon-password: "\e925";
+$cc-icon-search_d: "\e926";
+$cc-icon-search_m: "\e927";
+$cc-icon-sign-out: "\e928";
+$cc-icon-sign_out: "\e929";
+$cc-icon-subtract: "\e92a";
+$cc-icon-list: "\e92b";
+$cc-icon-milestone: "\e92e";
+$cc-icon-progress: "\e933";
+$cc-icon-submitted: "\e92f";
+$cc-icon-accepted: "\e92c";
+$cc-icon-completed: "\e92d";
+$cc-icon-cross: "\e943";
+
+@font-face {
+    font-family: CCFont; /* stylelint-disable-line */
+    src: url('../fonts/CCFont.eot');
+    src:
+    url('../fonts/CCFont.eot') format('embedded-opentype'),
+    url('../fonts/CCFont.ttf') format('truetype'),
+    url('../fonts/CCFont.woff') format('woff'),
+    url('../fonts/CCFont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="cc-icon-"],
+[class*=" cc-icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: CCFont; /* stylelint-disable-line */
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.cc-icon-call {
+    &::before {
+        content: $cc-icon-call;
+    }
+}
+
+.cc-icon-documentation {
+    &::before {
+        content: $cc-icon-documentation;
+    }
+}
+
+.cc-icon-email {
+    &::before {
+        content: $cc-icon-email;
+    }
+}
+
+.cc-icon-faq {
+    &::before {
+        content: $cc-icon-faq;
+    }
+}
+
+.cc-icon-guidednav {
+    &::before {
+        content: $cc-icon-guidednav;
+    }
+}
+
+.cc-icon-personaldetails {
+    &::before {
+        content: $cc-icon-personaldetails;
+    }
+}
+
+.cc-icon-account_d {
+    &::before {
+        content: $cc-icon-account_d;
+    }
+}
+
+.cc-icon-account_m {
+    &::before {
+        content: $cc-icon-account_m;
+    }
+}
+
+.cc-icon-add {
+    &::before {
+        content: $cc-icon-add;
+    }
+}
+
+.cc-icon-basket_d {
+    &::before {
+        content: $cc-icon-basket_d;
+    }
+}
+
+.cc-icon-basket_m {
+    &::before {
+        content: $cc-icon-basket_m;
+    }
+}
+
+.cc-icon-caretdown_b {
+    &::before {
+        content: $cc-icon-caretdown_b;
+    }
+}
+
+.cc-icon-caretdown_l {
+    &::before {
+        content: $cc-icon-caretdown_l;
+    }
+}
+
+.cc-icon-caretleft_b {
+    &::before {
+        content: $cc-icon-caretleft_b;
+    }
+}
+
+.cc-icon-caretleft_l {
+    &::before {
+        content: $cc-icon-caretleft_l;
+    }
+}
+
+.cc-icon-caretright_b {
+    &::before {
+        content: $cc-icon-caretright_b;
+    }
+}
+
+.cc-icon-caretright_l {
+    &::before {
+        content: $cc-icon-caretright_l;
+    }
+}
+
+.cc-icon-caretup_b {
+    &::before {
+        content: $cc-icon-caretup_b;
+    }
+}
+
+.cc-icon-caretup_l {
+    &::before {
+        content: $cc-icon-caretup_l;
+    }
+}
+
+.cc-icon-close_l {
+    &::before {
+        content: $cc-icon-close_l;
+    }
+}
+
+.cc-icon-close_m {
+    &::before {
+        content: $cc-icon-close_m;
+    }
+}
+
+.cc-icon-contact {
+    &::before {
+        content: $cc-icon-contact;
+    }
+}
+
+.cc-icon-customerdocumentation {
+    &::before {
+        content: $cc-icon-customerdocumentation;
+    }
+}
+
+.cc-icon-datepicker {
+    &::before {
+        content: $cc-icon-datepicker;
+    }
+}
+
+.cc-icon-edit {
+    &::before {
+        content: $cc-icon-edit;
+    }
+}
+
+.cc-icon-faq1 {
+    &::before {
+        content: $cc-icon-faq1;
+    }
+}
+
+.cc-icon-fielderror {
+    &::before {
+        content: $cc-icon-fielderror;
+    }
+}
+
+.cc-icon-fieldnoneditable {
+    &::before {
+        content: $cc-icon-fieldnoneditable;
+    }
+}
+
+.cc-icon-fieldvalid {
+    &::before {
+        content: $cc-icon-fieldvalid;
+    }
+}
+
+.cc-icon-inputhide {
+    &::before {
+        content: $cc-icon-inputhide;
+    }
+}
+
+.cc-icon-inputreveal {
+    &::before {
+        content: $cc-icon-inputreveal;
+    }
+}
+
+.cc-icon-langcaretdown_d {
+    &::before {
+        content: $cc-icon-langcaretdown_d;
+    }
+}
+
+.cc-icon-menu_m {
+    &::before {
+        content: $cc-icon-menu_m;
+    }
+}
+
+.cc-icon-open_m {
+    &::before {
+        content: $cc-icon-open_m;
+    }
+}
+
+.cc-icon-orderhistory {
+    &::before {
+        content: $cc-icon-orderhistory;
+    }
+}
+
+.cc-icon-pageerror .path1 {
+    &::before {
+        content: $cc-icon-pageerror-path1;
+        color: rgb(0, 0, 0);
+    }
+}
+
+.cc-icon-pageerror .path2 {
+    &::before {
+        content: $cc-icon-pageerror-path2;
+        margin-left: -1em;
+        color: rgb(255, 255, 255);
+    }
+}
+
+.cc-icon-password {
+    &::before {
+        content: $cc-icon-password;
+    }
+}
+
+.cc-icon-search_d {
+    &::before {
+        content: $cc-icon-search_d;
+    }
+}
+
+.cc-icon-search_m {
+    &::before {
+        content: $cc-icon-search_m;
+    }
+}
+
+.cc-icon-sign-out {
+    &::before {
+        content: $cc-icon-sign-out;
+    }
+}
+
+.cc-icon-sign_out {
+    &::before {
+        content: $cc-icon-sign_out;
+    }
+}
+
+.cc-icon-subtract {
+    &::before {
+        content: $cc-icon-subtract;
+    }
+}
+
+.cc-icon-list {
+    &::before {
+        content: $cc-icon-list;
+    }
+}
+
+.cc-icon-milestone {
+    &::before {
+        content: $cc-icon-milestone;
+    }
+}
+
+.cc-icon-progress {
+    &::before {
+        content: $cc-icon-progress;
+    }
+}
+
+.cc-icon-submitted {
+    &::before {
+        content: $cc-icon-submitted;
+    }
+}
+
+.cc-icon-accepted {
+    &::before {
+        content: $cc-icon-accepted;
+    }
+}
+
+.cc-icon-completed {
+    &::before {
+        content: $cc-icon-completed;
+    }
+}
+
+.cc-icon-cross {
+    &::before {
+        content: $cc-icon-cross;
+    }
+}

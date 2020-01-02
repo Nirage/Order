@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Imported order files
-import OrderDetails from './order-details';
-import Msg from './Messages';
-
+import OrderDetails from './Details';
+import Msg from '../Messages';
 // Polyfills
 import 'intersection-observer';
 // import 'element-closest';
@@ -16,7 +15,7 @@ export default class Single extends Component {
         // Varibles
         this.d = document;
         this.b = this.d.body;
-        this.orderHistory = this.b.querySelector('.js-orderhistory');
+        this.orderHistory = this.d.getElementById('js-orderhistory');
     }
 
     componentDidMount() {
