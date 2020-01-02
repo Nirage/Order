@@ -6,7 +6,7 @@
         "code": "PI_FAILED",
         "type": "OrderStatus"
       },
-      "statusDisplay": "pi_failed",
+      "statusDisplay": "accepted",
       "placed": 1577781223719,
       "guid": "f8c7266b-73f0-4042-8223-d774f6e93395",
       "total": {

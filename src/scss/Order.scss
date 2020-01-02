@@ -2,11 +2,27 @@
 @import "_fonts.scss";
 @import "_icons.scss";
 
-// Order
-[class*="page-order"] {
-    .main {
-        position: relative;
-    }
+// Order //
+h1 {
+    font-family: 'Italian Plate No1 DemiBold';
+}
+
+h3 {
+    font-family: "Italian Plate No1 Bold", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+
+button {
+    border: 0;
+    background: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .account {
@@ -71,6 +87,7 @@
 .orderhistory {
     position: relative;
     min-height: 250px;
+    font-family: 'Italian Plate No1 Light';
 
     @media (max-width: $screen-sm-max){
         margin: 0 -20px;
@@ -251,10 +268,17 @@
                         font-size: 22px;
                     }
                 }
-                &-name {
+                &-anchor {
                     font-size: 18px;
+                    color: #333;
+                    -webkit-transition: color 0.15s linear;
+                    transition: color 0.15s linear;
+                    margin-bottom: 0;
                     @media (min-width: $screen-md-min){
                         font-size: 22px;
+                    }
+                    &:hover {
+                        color: $brand-info;
                     }
                 }
                 &-image {
@@ -636,6 +660,33 @@
     .btn {
         float: right;
         text-transform: capitalize;
+        padding: 7px 18px;
+        font-size: 18px;
+        line-height: 1.5;
+        border-radius: 100em;
+        font-family: "Italian Plate No1 DemiBold", sans-serif;
+        font-weight: normal;
+        font-style: normal;
+        text-decoration: none;
+        border-width: 3px;
+        -webkit-transition: color 0.15s linear, background-color 0.15s linear, border-color 0.15s linear;
+        transition: color 0.15s linear, background-color 0.15s linear, border-color 0.15s linear;
+        -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        outline: none;
+        &--lg {
+            font-size: 22px;
+        }
+        &-default {
+            color: $white;
+            background-color: $kbd-bg;
+            border-color: $kbd-bg;
+        }
+        &.js-status {
+            background-color: $brand-primary;
+            color: $white;
+            padding: 0 15px;
+        }
         &.contentblock__btn {
             float: none;
             position: relative;

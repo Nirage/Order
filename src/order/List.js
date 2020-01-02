@@ -195,12 +195,13 @@ export default class List extends Component {
         if (isLoading) {
             if (results.length) {
                 const { fromTnT } = results[0];
-                return <div>
+                return <div className="row">
                     {
                         !fromTnT && <div className="alert alert-danger alert-dismissable getAccAlert">
                             <div className="alert-danger__message">{this.msg.tntNotOrders}</div>
                         </div>
                     }
+                    <h1>Order</h1>
                     <div className={`account-section-top ${orderItem ? 'account-section--hide' : ''}`}>
                         <div className="orderhistory-view clearfix">
                             <div className="h3 pull-left js-orderhistory-showing">Showing orders 1-{results.length} of {totalNumberOfResults}</div>

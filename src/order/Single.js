@@ -62,7 +62,7 @@ export default class Single extends Component {
                         <i className="cc-icon pull-left" />
                         <button
                           type="button"
-                          className="js-status"
+                          className="js-status btn"
                           data-order-code={code}
                           data-url={url}
                           data-index={index}
