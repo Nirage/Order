@@ -89,10 +89,6 @@ button {
     min-height: 250px;
     font-family: 'Italian Plate No1 Light';
 
-    @media (max-width: $screen-sm-max){
-        margin: 0 -20px;
-    }
-
     &-back {
         padding: 5px 20px 5px 15px;
         appearance: none;
@@ -686,6 +682,7 @@ button {
             background-color: $brand-primary;
             color: $white;
             padding: 0 15px;
+            width: 100%;
         }
         &.contentblock__btn {
             float: none;
