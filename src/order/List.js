@@ -20,8 +20,7 @@ export default class List extends Component {
         // State
         this.state = {
             results: [],
-            popItems: -1,
-            productData: {}
+            popItems: -1
         };
     }
 
@@ -50,7 +49,6 @@ export default class List extends Component {
         fetch(`./orderData.json?${qs.stringify(param)}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 const { results, sorts, pagination } = data;
                 const { currentPage, pageSize, totalNumberOfResults } = pagination;
                 const checkCancelled = results.filter(order => order.orderDetails).map(order => {
@@ -69,10 +67,33 @@ export default class List extends Component {
                     totalNumberOfResults,
                     hasCancelled: checkCancelled.indexOf(true) > -1
                 }));
+                console.log(data);
             })
             .catch(error => {
                 console.error('Requestfailed', error);
                 ReactDOM.render(<p>{this.msg.noOrders}</p>, this.orderHistory);
+            });
+    }
+
+    fetchOrderDetails = (orderDetails, tar, results) => {
+        const { dataset } = tar;
+
+        !orderDetails && fetch(dataset.url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const updateResults = JSON.parse(JSON.stringify(results));
+                // Inject OrderDetails to targeted Order
+                updateResults[parseInt(dataset.index)].orderDetails = data;
+
+                this.setState({
+                    results: updateResults,
+                    popItems: parseInt(dataset.index),
+                    hasCancelled: data.hasCancelled
+                });
+            })
+            .catch(error => {
+                console.error('Requestfailed', error);
             });
     }
 
@@ -85,7 +106,6 @@ export default class List extends Component {
         const queryParam = this.updateQueryStringParam(search, 'displayMode', displayMode);
         this.setState({ displayMode });
         history.push({ search: queryParam });
-        this.viewSwitch(displayMode);
     }
 
     sortChangeHandler = e => {
@@ -111,66 +131,35 @@ export default class List extends Component {
     }
 
     backToListHandler = () => {
-        const list = this.orderHistory.querySelectorAll('.orderhistory-list');
         const { history } = this.props;
         history.goBack();
-        list.forEach(ls => {
-            ls.classList.remove('hide');
-            if (ls.querySelector('.js-orderhistory-toggle').dataset.moreLess === 'Less details') {
-                ls.querySelector('.product-table').classList.add('hide');
-            }
-        });
         this.mq.matches && this.setState({ displayMode: 'list' });
-        this.orderHistory.querySelector('.js-orderhistory-toggle.hide').classList.remove('hide');
     }
 
     toggleClickHandler = e => {
         e.preventDefault();
         const tar = e.target.closest('button');
-        const tarList = tar.closest('.orderhistory-list');
-        const details = tarList.querySelector('.product-table');
-        console.log(tar.dataset.index, tar, this.props);
+        const { results } = this.state;
+        const { index } = tar.dataset;
+        const { orderDetails } = results[parseInt(index)];
+        // Status Button
         if (tar.classList.contains('js-status')) {
             const { history } = this.props;
-            const list = this.orderHistory.querySelectorAll('.orderhistory-list');
             history.push({ search: `orderitem=${tar.dataset.orderCode}` });
-            list.forEach(ls => { if (ls !== tarList) ls.classList.add('hide'); });
-            tarList.querySelector('.js-orderhistory-toggle').classList.add('hide');
-            details.classList.remove('hide');
-            this.setState({ displayMode: 'tile' });
         } else {
+            // More / Less Button
             const currMsg = tar.innerText;
             const icon = tar.querySelector('.cc-icon');
+            const tarList = tar.closest('.orderhistory-list');
+            const details = tarList.querySelector('.product-table');
             tar.childNodes[0].nodeValue = tar.dataset.moreLess;
             tar.dataset.moreLess = currMsg;
             icon.classList.toggle('cc-icon-close_m');
             icon.classList.toggle('cc-icon-open_m');
-            if (details.childElementCount) details.classList.toggle('hide');
+            orderDetails && details.classList.toggle('hide');
         }
 
-        // If Products exists
-        if (!details.childElementCount) {
-            // Fetch Order Product(s) Details
-            fetch(tar.dataset.url)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    this.setState({
-                        popItems: parseInt(tar.dataset.index),
-                        productData: data,
-                        hasCancelled: data.hasCancelled
-                    });
-                })
-                .catch(error => {
-                    console.error('Requestfailed', error);
-                });
-        }
-    }
-
-    viewSwitch(displayMode) {
-        const switchMode = 'orderhistory--list';
-        const orderClass = this.orderHistory.classList;
-        displayMode === 'list' ? orderClass.add(switchMode) : orderClass.remove(switchMode);
+        this.fetchOrderDetails(orderDetails, tar, results);
     }
 
     updateQueryStringParam(uri, key, value) {
@@ -184,18 +173,18 @@ export default class List extends Component {
 
     render() {
         const {
-            isLoading, popItems, productData, results, totalNumberOfResults, displayMode, currentPage, pageSize, sorts, sortValue, hasCancelled, disableEvent
+            isLoading, popItems, results, totalNumberOfResults, currentPage, pageSize, sorts, sortValue, hasCancelled, disableEvent
         } = this.state;
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
         const orderItem = typeof queryParam.orderitem !== 'undefined';
-        this.viewSwitch(displayMode);
+        const queryDisplayMode = queryParam.displayMode;
 
         if (isLoading) {
             if (results.length) {
                 const { fromTnT } = results[0];
-                return <div className="row">
+                return <div className={`orderhistory row ${queryDisplayMode === 'list' ? 'orderhistory--list' : ''}`}>
                     {
                         !fromTnT && <div className="alert alert-danger alert-dismissable getAccAlert">
                             <div className="alert-danger__message">{this.msg.tntNotOrders}</div>
@@ -211,16 +200,17 @@ export default class List extends Component {
                                     <button
                                       type="button"
                                       onClick={this.switchLayoutHandler}
-                                      className={`cc-icon-milestone ${displayMode === 'tile' || !displayMode ? 'orderhistory-view--active' : ''}`}
+                                      className={`cc-icon-milestone ${queryDisplayMode === 'tile' || !queryDisplayMode ? 'orderhistory-view--active' : ''}`}
                                       aria-label="tile"
                                       data-display-mode="tile"
                                     />
                                     <button
                                       type="button"
                                       onClick={this.switchLayoutHandler}
-                                      className={`cc-icon-list ${displayMode === 'list' ? 'orderhistory-view--active' : ''}`}
+                                      className={`cc-icon-list ${queryDisplayMode === 'list' ? 'orderhistory-view--active' : ''}`}
                                       data-display-mode="list"
                                       aria-label="list"
+                                      title={this.msg.listview}
                                     />
                                 </div>
                             </div>
@@ -280,10 +270,8 @@ export default class List extends Component {
                                           history={history}
                                           order={order}
                                           index={index}
-                                          displayMode={displayMode}
                                           toggleClickHandler={this.toggleClickHandler}
                                           popItems={popItems}
-                                          productData={productData}
                                           orderItem={orderItem}
                                           queryParam={queryParam}
                                         />;
@@ -294,11 +282,10 @@ export default class List extends Component {
                                       history={history}
                                       order={order}
                                       index={index}
-                                      displayMode={displayMode}
                                       toggleClickHandler={this.toggleClickHandler}
                                       popItems={popItems}
-                                      productData={productData}
                                       orderItem={false}
+                                      queryParam={queryParam}
                                     />;
                                 }
                                 return false;

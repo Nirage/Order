@@ -100,8 +100,8 @@ export default class Details extends Component {
         };
 
         return <div>
-            <UnconsignedComp />
-            <ConsignmentComp />
+            { unconsignedEntries.length ? <UnconsignedComp /> : '' }
+            { consignments ? <ConsignmentComp /> : '' }
         </div>;
     }
 }

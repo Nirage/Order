@@ -42,16 +42,16 @@ export default class Single extends Component {
     render() {
         let currStatus;
         const {
-            displayMode, order, popItems, index, orderItem, toggleClickHandler, productData
+            order, popItems, index, orderItem, toggleClickHandler, queryParam
         } = this.props;
         const {
             code, guid, statusDisplay, orderDetails, fromTnT
         } = order;
-        const showTwoOrderDetails = order.orderDetails && this.mq.matches;
-        const url = !showTwoOrderDetails ? `/my-account/order/details?code=${code}&guid=${guid}` : '';
+        const showOrderDetails = order.orderDetails && this.mq.matches;
+        const url = !showOrderDetails ? `/my-account/order/details?code=${code}&guid=${guid}` : '';
         // statusDisplay = 'Cancelled';
 
-        return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')}`} data-display-mode={displayMode}>
+        return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')} ${orderItem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
             <div className="col-xs-12 col-md-2 hidden-md hidden-lg orderhistory-progress">
                 <a href={`/my-account/order/${code}?guid=${guid}`}>{code}</a>
             </div>
@@ -133,33 +133,31 @@ export default class Single extends Component {
                           type="button"
                           data-order-code={code}
                           data-url={url}
-                          data-more-less={showTwoOrderDetails ? this.msg.moreMsg : this.msg.lessMsg}
+                          data-more-less={showOrderDetails ? this.msg.moreMsg : this.msg.lessMsg}
                           data-index={index}
                           onClick={toggleClickHandler}
                         >
-                            {showTwoOrderDetails ? this.msg.lessMsg : this.msg.moreMsg}
-                            <i className={`cc-icon cc-icon-${showTwoOrderDetails ? 'close' : 'open'}_m`} />
+                            {showOrderDetails ? this.msg.lessMsg : this.msg.moreMsg}
+                            <i className={`cc-icon cc-icon-${showOrderDetails ? 'close' : 'open'}_m`} />
                         </button>
                     </div>
                 </div>
             </div>
             <div className="product-table">
-                {(popItems === index || showTwoOrderDetails)
-                    && <OrderDetails
-                      data={orderDetails !== null ? orderDetails : productData}
-                      tnt={fromTnT || false}
-                    />}
+                {
+                    (popItems === index || showOrderDetails)
+                    && <OrderDetails data={orderDetails} tnt={fromTnT || false} />
+                }
             </div>
         </div>;
     }
 }
 
 Single.propTypes = {
-    displayMode: PropTypes.string.isRequired,
     order: PropTypes.shape().isRequired,
     orderItem: PropTypes.bool.isRequired,
     toggleClickHandler: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
     popItems: PropTypes.number.isRequired,
-    productData: PropTypes.shape().isRequired
+    queryParam: PropTypes.shape().isRequired
 };

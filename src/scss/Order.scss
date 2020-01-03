@@ -5,6 +5,7 @@
 // Order //
 h1 {
     font-family: 'Italian Plate No1 DemiBold';
+    text-align: left;
 }
 
 h3 {
@@ -95,7 +96,7 @@ button {
         border: 1px solid $gray-light;
         display: none;
         position: relative;
-        top: -60px;
+        top: 70px;
 
         @media (max-width: $screen-sm-max){
             right: 20px;
