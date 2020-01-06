@@ -178,6 +178,8 @@ export default class List extends Component {
         const orderItem = typeof queryParam.orderitem !== 'undefined';
         const queryDisplayMode = queryParam.displayMode;
 
+        console.log(this.state);
+
         if (isLoading) {
             if (results.length) {
                 const { fromTnT } = results[0];
