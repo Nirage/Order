@@ -12,14 +12,9 @@ export default class Single extends Component {
         super(props);
         this.mq = window.matchMedia('(min-width: 1024px)');
         this.msg = new Msg();
-        // Varibles
-        this.d = document;
-        this.b = this.d.body;
-        this.orderHistory = this.d.getElementById('js-orderhistory');
     }
-
     componentDidMount() {
-        // Animated in view of statusbar
+        const orderHistory = document.getElementById('js-orderhistory');
         const config = {
             root: null,
             threshold: 0.9
@@ -34,24 +29,37 @@ export default class Single extends Component {
                 }
             });
         }, config);
-        this.orderHistory.querySelectorAll('.orderhistory-status').forEach(status => {
+        orderHistory.querySelectorAll('.orderhistory-status').forEach(status => {
+            // Animated in view of statusbar
             observer.observe(status);
         });
     }
 
     render() {
         let currStatus;
+        const mq = window.matchMedia('(min-width: 1024px)');
         const {
-            order, popItems, index, orderItem, toggleClickHandler, queryParam
+            order, popItems, index, orderItem, toggleClickHandler, queryParam, results, fetchOrderDetails
         } = this.props;
         const {
             code, guid, statusDisplay, orderDetails, fromTnT
         } = order;
-        const showOrderDetails = order.orderDetails && this.mq.matches;
+        const showOrderDetails = orderDetails && mq.matches;
         const url = !showOrderDetails ? `/my-account/order/details?code=${code}&guid=${guid}` : '';
+        const hasCancelled = orderDetails ? orderDetails.hasCancelled : order.hasCancelled;
         // statusDisplay = 'Cancelled';
 
+        // Fetch order details is not already available
+        code === queryParam.orderitem
+        && !orderDetails
+        && fetchOrderDetails(orderDetails, index, url, results);
+
         return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')} ${orderItem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
+            {
+                hasCancelled && <div className="orderhistory-results-cancelled">
+                    <i className="cc-icon-fielderror" /><strong>{this.msg.note}</strong> - {this.msg.cancelled_info}
+                </div>
+            }
             <div className="col-xs-12 col-md-2 hidden-md hidden-lg orderhistory-progress">
                 <a href={`/my-account/order/${code}?guid=${guid}`}>{code}</a>
             </div>
@@ -159,5 +167,9 @@ Single.propTypes = {
     toggleClickHandler: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
     popItems: PropTypes.number.isRequired,
-    queryParam: PropTypes.shape().isRequired
+    queryParam: PropTypes.shape().isRequired,
+    fetchOrderDetails: PropTypes.func.isRequired,
+    results: PropTypes.arrayOf(
+        PropTypes.shape().isRequired
+    ).isRequired
 };

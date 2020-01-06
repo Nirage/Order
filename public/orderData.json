@@ -4468,7 +4468,7 @@
         "estimatedCompletionDate": null,
         "isDeliveryDateInFuture": null,
         "isCompletionDateInThePast": null,
-        "hasCancelled": false
+        "hasCancelled": true
       },
       "isUnknownStatusCode": null,
       "isDeliveryDateInFuture": null,

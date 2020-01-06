@@ -10,10 +10,6 @@ import '../scss/Order.scss';
 export default class List extends Component {
     constructor(props) {
         super(props);
-        // Varibles
-        this.d = document;
-        this.b = this.d.body;
-        this.orderHistory = this.d.getElementById('js-orderhistory');
         // Media Query
         this.mq = window.matchMedia('(min-width: 1024px)');
         this.msg = new Msg();
@@ -51,10 +47,6 @@ export default class List extends Component {
             .then(data => {
                 const { results, sorts, pagination } = data;
                 const { currentPage, pageSize, totalNumberOfResults } = pagination;
-                const checkCancelled = results.filter(order => order.orderDetails).map(order => {
-                    const { orderDetails } = order;
-                    return orderDetails.hasCancelled;
-                });
                 this.setState(prevState => ({
                     isLoading: true,
                     disableEvent: false,
@@ -64,32 +56,31 @@ export default class List extends Component {
                     sortValue: sortUpdate,
                     currentPage,
                     pageSize,
-                    totalNumberOfResults,
-                    hasCancelled: checkCancelled.indexOf(true) > -1
+                    totalNumberOfResults
                 }));
                 console.log(data);
             })
             .catch(error => {
                 console.error('Requestfailed', error);
-                ReactDOM.render(<p>{this.msg.noOrders}</p>, this.orderHistory);
+                const orderHistory = document.getElementById('js-orderhistory');
+                ReactDOM.render(<p>{this.msg.noOrders}</p>, orderHistory);
             });
     }
 
-    fetchOrderDetails = (orderDetails, tar, results) => {
-        const { dataset } = tar;
+    fetchOrderDetails = (orderDetails, index, url, results) => {
+        const updateResults = [...results]; // clone
 
-        !orderDetails && fetch(dataset.url)
+        !orderDetails && fetch(url)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                const updateResults = JSON.parse(JSON.stringify(results));
                 // Inject OrderDetails to targeted Order
-                updateResults[parseInt(dataset.index)].orderDetails = data;
+                const order = updateResults[parseInt(index)];
+                order.orderDetails = data;
+                order.hasCancelled = order.orderDetails.hasCancelled;
 
                 this.setState({
                     results: updateResults,
-                    popItems: parseInt(dataset.index),
-                    hasCancelled: data.hasCancelled
+                    popItems: parseInt(index)
                 });
             })
             .catch(error => {
@@ -125,27 +116,33 @@ export default class List extends Component {
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = this.updateQueryStringParam(search, 'page', currentPage + 1);
-        this.setState({ disableEvent: true });
+        this.setState({ disableEvent: true, currentPage: currentPage + 1 });
         history.push({ search: queryParam });
         this.getData(displayMode, currentPage + 1, sortValue, false);
     }
 
     backToListHandler = () => {
+        const mq = window.matchMedia('(min-width: 1024px)');
         const { history } = this.props;
         history.goBack();
-        this.mq.matches && this.setState({ displayMode: 'list' });
+        mq.matches && this.setState({ displayMode: 'list' });
     }
 
     toggleClickHandler = e => {
         e.preventDefault();
         const tar = e.target.closest('button');
-        const { results } = this.state;
+        const { results, currentPage } = this.state;
         const { index } = tar.dataset;
-        const { orderDetails } = results[parseInt(index)];
+        const { code, guid, orderDetails } = results[parseInt(index)];
+        const url = `/my-account/order/details?code=${code}&guid=${guid}`;
         // Status Button
         if (tar.classList.contains('js-status')) {
             const { history } = this.props;
-            history.push({ search: `orderitem=${tar.dataset.orderCode}` });
+            const queryParam = {
+                orderitem: tar.dataset.orderCode,
+                page: currentPage
+            };
+            history.push({ search: qs.stringify(queryParam) });
         } else {
             // More / Less Button
             const currMsg = tar.innerText;
@@ -159,7 +156,7 @@ export default class List extends Component {
             orderDetails && details.classList.toggle('hide');
         }
 
-        this.fetchOrderDetails(orderDetails, tar, results);
+        this.fetchOrderDetails(orderDetails, index, url, results);
     }
 
     updateQueryStringParam(uri, key, value) {
@@ -173,7 +170,7 @@ export default class List extends Component {
 
     render() {
         const {
-            isLoading, popItems, results, totalNumberOfResults, currentPage, pageSize, sorts, sortValue, hasCancelled, disableEvent
+            isLoading, popItems, results, totalNumberOfResults, currentPage, pageSize, sorts, sortValue, disableEvent
         } = this.state;
         const { history, location } = this.props;
         const { search } = location;
@@ -255,12 +252,8 @@ export default class List extends Component {
                     </div>
                     <div className="orderhistory-results">
                         {
-                            hasCancelled && <div className="orderhistory-results-cancelled">
-                                <i className="cc-icon-fielderror" /><strong>{this.msg.note}</strong> - {this.msg.cancelled_info}
-                            </div>
-                        }
-                        {
                             results.map((order, index) => {
+                                // Check query param otheritem
                                 if (orderItem) {
                                     // console.log(orderItem);
                                     if (order.code === queryParam.orderitem) {
@@ -274,6 +267,8 @@ export default class List extends Component {
                                           popItems={popItems}
                                           orderItem={orderItem}
                                           queryParam={queryParam}
+                                          results={results}
+                                          fetchOrderDetails={this.fetchOrderDetails}
                                         />;
                                     }
                                 } else {
@@ -286,6 +281,8 @@ export default class List extends Component {
                                       popItems={popItems}
                                       orderItem={false}
                                       queryParam={queryParam}
+                                      results={results}
+                                      fetchOrderDetails={this.fetchOrderDetails}
                                     />;
                                 }
                                 return false;
