@@ -39,22 +39,28 @@ export default class Single extends Component {
         let currStatus;
         const mq = window.matchMedia('(min-width: 1024px)');
         const {
-            order, popItems, index, orderItem, toggleClickHandler, queryParam, results, fetchOrderDetails
+            order,
+            popItems,
+            index,
+            orderitem,
+            toggleClickHandler,
+            queryParam, results,
+            fetchOrderDetails
         } = this.props;
         const {
-            code, guid, statusDisplay, orderDetails, fromTnT
+            code, guid, orderDetails, fromTnT
         } = order;
+        const statusDisplay = order.statusDisplay ? order.statusDisplay : this.msg.unknown;
         const showOrderDetails = orderDetails && mq.matches;
         const url = !showOrderDetails ? `/my-account/order/details?code=${code}&guid=${guid}` : '';
         const hasCancelled = orderDetails ? orderDetails.hasCancelled : order.hasCancelled;
         // statusDisplay = 'Cancelled';
 
         // Fetch order details is not already available
-        code === queryParam.orderitem
-        && !orderDetails
+        code === queryParam.orderitem && !orderDetails
         && fetchOrderDetails(orderDetails, index, url, results);
 
-        return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')} ${orderItem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
+        return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')} ${orderitem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
             {
                 hasCancelled && <div className="orderhistory-results-cancelled">
                     <i className="cc-icon-fielderror" /><strong>{this.msg.note}</strong> - {this.msg.cancelled_info}
@@ -137,7 +143,7 @@ export default class Single extends Component {
                             })()}: {order.isDeliveryDateInFuture ? this.msg.futureMsg : order.estimatedCompletionDate}
                         </div>
                         <button
-                          className={`orderhistory-toggle js-orderhistory-toggle pull-right ${orderItem ? 'hide' : ''}`}
+                          className={`orderhistory-toggle js-orderhistory-toggle pull-right ${orderitem ? 'hide' : ''}`}
                           type="button"
                           data-order-code={code}
                           data-url={url}
@@ -163,7 +169,7 @@ export default class Single extends Component {
 
 Single.propTypes = {
     order: PropTypes.shape().isRequired,
-    orderItem: PropTypes.bool.isRequired,
+    orderitem: PropTypes.string,
     toggleClickHandler: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
     popItems: PropTypes.number.isRequired,
@@ -172,4 +178,8 @@ Single.propTypes = {
     results: PropTypes.arrayOf(
         PropTypes.shape().isRequired
     ).isRequired
+};
+
+Single.defaultProps = {
+    orderitem: null
 };

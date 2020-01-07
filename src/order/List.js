@@ -26,7 +26,6 @@ export default class List extends Component {
         } = this.props;
         const { search } = location;
         const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
-
         const mode = queryParam.displayMode ? queryParam.displayMode : displayMode;
         const page = queryParam.page ? queryParam.page : currentPage;
         const sort = queryParam.sort ? queryParam.sort : sortValue;
@@ -170,15 +169,21 @@ export default class List extends Component {
 
     render() {
         const {
-            isLoading, popItems, results, totalNumberOfResults, currentPage, pageSize, sorts, sortValue, disableEvent
+            isLoading,
+            popItems,
+            results,
+            totalNumberOfResults,
+            currentPage,
+            pageSize,
+            sorts,
+            sortValue,
+            disableEvent
         } = this.state;
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
-        const orderItem = typeof queryParam.orderitem !== 'undefined';
+        const { orderitem } = queryParam;
         const queryDisplayMode = queryParam.displayMode;
-
-        console.log(this.state);
 
         if (isLoading) {
             if (results.length) {
@@ -190,7 +195,7 @@ export default class List extends Component {
                         </div>
                     }
                     <h1>Order</h1>
-                    <div className={`account-section-top ${orderItem ? 'account-section--hide' : ''}`}>
+                    <div className={`account-section-top ${orderitem ? 'account-section--hide' : ''}`}>
                         <div className="orderhistory-view clearfix">
                             <div className="h3 pull-left js-orderhistory-showing">Showing orders 1-{results.length} of {totalNumberOfResults}</div>
                             <div className="hidden-xs hidden-sm pull-right">
@@ -255,47 +260,29 @@ export default class List extends Component {
                     <div className="orderhistory-results">
                         {
                             results.map((order, index) => {
-                                // Check query param otheritem
-                                if (orderItem) {
-                                    // console.log(orderItem);
-                                    if (order.code === queryParam.orderitem) {
-                                        console.log(order.code === queryParam.orderitem);
-                                        return <OrderSingle
-                                          key={order.code}
-                                          history={history}
-                                          order={order}
-                                          index={index}
-                                          toggleClickHandler={this.toggleClickHandler}
-                                          popItems={popItems}
-                                          orderItem={orderItem}
-                                          queryParam={queryParam}
-                                          results={results}
-                                          fetchOrderDetails={this.fetchOrderDetails}
-                                        />;
-                                    }
-                                } else {
-                                    return <OrderSingle
-                                      key={order.code}
-                                      history={history}
-                                      order={order}
-                                      index={index}
-                                      toggleClickHandler={this.toggleClickHandler}
-                                      popItems={popItems}
-                                      orderItem={false}
-                                      queryParam={queryParam}
-                                      results={results}
-                                      fetchOrderDetails={this.fetchOrderDetails}
-                                    />;
-                                }
-                                return false;
+                                const props = {
+                                    key: order.code,
+                                    history,
+                                    order,
+                                    index,
+                                    popItems,
+                                    orderitem,
+                                    queryParam,
+                                    results,
+                                    toggleClickHandler: this.toggleClickHandler,
+                                    fetchOrderDetails: this.fetchOrderDetails
+                                };
+                                // Check query param otherItem
+                                return orderitem
+                                    ? order.code === queryParam.orderitem && <OrderSingle {...props} />
+                                    : <OrderSingle {...props} />;
                             })
                         }
-
                         {
                             totalNumberOfResults > (currentPage + 1) * pageSize && <div className="row js-load-more-section">
                                 <button
                                   type="button"
-                                  className={`btn contentblock__btn btn--lg btn-block-xs js-load-more ${orderItem ? 'hide' : ''} ${disableEvent ? 'disabled' : ''}`}
+                                  className={`btn contentblock__btn btn--lg btn-block-xs js-load-more ${orderitem ? 'hide' : ''} ${disableEvent ? 'disabled' : ''}`}
                                   disabled={disableEvent}
                                   onClick={this.loadmoreHandler}
                                 >

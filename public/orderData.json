@@ -663,7 +663,7 @@
             "statusDisplay": "Out for delivery",
             "shippingDate": "08/05/2017",
             "courierUrl": null,
-            "showTrackPackage": false
+            "showTrackPackage": true
           },
           {
             "code": null,
@@ -926,7 +926,7 @@
             "statusDisplay": "Out for delivery",
             "shippingDate": "08/05/2017",
             "courierUrl": null,
-            "showTrackPackage": false
+            "showTrackPackage": true
           }
         ],
         "deliveryStatus": null,

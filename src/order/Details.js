@@ -50,9 +50,9 @@ export default class Details extends Component {
 
         const ConsignmentComp = () => {
             return consignments.map((entry, index) => {
-                const {
-                    entries, statusDisplay, showTrackPackage, courierUrl
-                } = entry;
+                const { entries, showTrackPackage, courierUrl } = entry;
+                const statusDisplay = entries.statusDisplay ? entries.statusDisplay : this.msg.unknown;
+
                 return <div className="product-table__consignment" key={index}>
                     <div className="product-table__item row">
                         { entries.map(list => {
@@ -85,14 +85,14 @@ export default class Details extends Component {
                               href={courierUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              lassName="contentblock__btn hidden-xs hidden-sm"
+                              className="contentblock__btn btn btn-default hidden-xs hidden-sm"
                             >{this.msg.trackPackage}</a>}
                         </div>
                         {showTrackPackage && <a
                           href={courierUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="contentblock__btn hidden-md hidden-lg"
+                          className="contentblock__btn btn btn-default hidden-md hidden-lg"
                         >{this.msg.trackPackage}</a>}
                     </div>
                 </div>;

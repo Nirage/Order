@@ -689,6 +689,7 @@ button {
             float: none;
             position: relative;
             height: 50px;
+            color: $gray-base;
             @media (min-width:  $screen-md-min){
                 width: 150px;
             }

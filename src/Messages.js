@@ -42,6 +42,7 @@ export default class Messages {
         this.accepted = 'IN-PROGRESS';
         this.cancelled = 'CANCELLED';
         this.completed = 'DESPATCHED';
+        this.unknown = 'Awaiting Status';
         this.note = 'PLEASE NOTE';
         this.cancelled_info = 'this order contains some cancelled items';
     }
