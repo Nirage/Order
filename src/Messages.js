@@ -20,7 +20,6 @@ export default class Messages {
         this.estDelDate = 'Estimated delivery date';
         this.shipped = 'Shipped on';
         this.cancelled = 'Cancelled on';
-        this.order = 'Order';
         this.total = 'Total';
         this.orderTotal = 'Order Total';
         this.orderDetails = 'Order details';
@@ -31,7 +30,7 @@ export default class Messages {
         this.sortby = 'Sort by:';
         this.backToList = 'Back to List';
         this.loadmore = 'Load more';
-        this.statusBar = ['Ordered', 'Accepted', 'In Progress', 'Cancelled', 'Part Shipped', 'Shipped'];
+        this.statusBar = ['Ordered', 'Accepted', 'In Progress', 'Cancelled', 'Shipped'];
         this.trackPackage = 'Track package';
         this.futureMsg = 'Text to be confirmed';
         this.created = 'SUBMITTED';

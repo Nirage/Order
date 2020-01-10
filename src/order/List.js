@@ -104,7 +104,7 @@ export default class List extends Component {
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = this.updateQueryStringParam(search, 'sort', sortValue);
-        this.setState({ disableEvent: true });
+        this.setState({ disableEvent: true, popItems: -1 });
         history.push({ search: queryParam });
         this.getData(displayMode, currentPage, sortValue, true);
     }
@@ -207,6 +207,7 @@ export default class List extends Component {
                                       className={`cc-icon-milestone ${queryDisplayMode === 'tile' || !queryDisplayMode ? 'orderhistory-view--active' : ''}`}
                                       aria-label="tile"
                                       data-display-mode="tile"
+                                      title={this.msg.tileview}
                                     />
                                     <button
                                       type="button"

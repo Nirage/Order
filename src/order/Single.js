@@ -101,7 +101,7 @@ export default class Single extends Component {
                     <span className="orderhistory--list--hide">{this.msg.delDate}</span>
                     <div className="orderhistory-info">{this.msg.est}: {order.estimatedCompletionDate}</div>
                 </div>
-                <div className="col-xs-12 col-md-2"><span className="hidden-md hidden-lg">{this.msg.order}</span> <span className="orderhistory--list--hide">{this.msg.total}</span>
+                <div className="col-xs-12 col-md-2"><span className="hidden-md hidden-lg">{this.msg.orderTotal}</span> <span className="hidden-xs hidden-sm">{this.msg.total}</span>
                     <div className="orderhistory-info">{order.total ? order.total.formattedValue : ''}</div>
                 </div>
                 <div className="col-xs-12 col-md-3 pull-right">
