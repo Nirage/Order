@@ -60,11 +60,24 @@ button {
                     }
                 }
                 &-sortby {
+                    &::-ms-value {
+                        background: none; /* remove blue background on ie10/ie11 when selected*/
+                        color:#5a5a5a;
+                    
+                    }
                     @media (min-width: $screen-md-min){
-                        width: 290px;
+                        width: 300px;
                         margin-left: 10px;
+                        &:focus {
+                            box-shadow: none;
+                            border-color: $gray-light;
+                        }
                     }
                 }
+            }
+
+            > button {
+                display: none;
             }
         }
         &--hide {
@@ -74,15 +87,26 @@ button {
             > div { 
                 display: none;
             }
-            .orderhistory-back {
+            > button {
                 display: block;
-                i {
-                    margin-right: 5px;
-                    font-size: 14px;
+                padding: 5px;
+                appearance: none;
+                border: 1px solid $gray-light;
+                outline: none;
+                position: relative;
+                top: -55px;
+        
+                @media (max-width: $screen-sm-max){
+                    right: 20px;
                 }
             }
         }
     }
+}
+
+#js-orderhistory {
+    position: relative;
+    min-height: 200px;
 }
 
 .orderhistory {
@@ -173,7 +197,7 @@ button {
             content: "\e92c";
         }
 
-        &--inprogress .cc-icon:before {
+        &--in_progress .cc-icon:before {
             content: "\e933";
         }
 
@@ -184,16 +208,36 @@ button {
                 background-color: $gray-border;
             }
 
-            .is-animated >.orderhistory-status-label:after {
-                content: "\e913";
+            .is-animated >.orderhistory-status-label {
+                color: #999;
+                &:after {
+                    content: "\e913";
+                }
             }
 
             .cc-icon:before {
                 content: "\e943";
             }
 
-            .orderhistory-info {
-                color: #333;
+            .orderhistory-progressbar {
+                display: flex;
+                @media (min-width: $screen-md-min){
+                    height: 60px;
+                }
+
+                > div {
+                    display: flex;
+                    align-items: center;
+                    &:last-child {
+                        justify-content: flex-end;
+                    }
+                }
+            }
+            
+            @media (max-width: $screen-sm-max){
+                .orderhistory-info {
+                    color: #333;
+                }
             }
         }
 
@@ -265,17 +309,10 @@ button {
                         font-size: 22px;
                     }
                 }
-                &-anchor {
+                &-name {
                     font-size: 18px;
-                    color: #333;
-                    -webkit-transition: color 0.15s linear;
-                    transition: color 0.15s linear;
-                    margin-bottom: 0;
                     @media (min-width: $screen-md-min){
                         font-size: 22px;
-                    }
-                    &:hover {
-                        color: $brand-info;
                     }
                 }
                 &-image {
@@ -497,6 +534,9 @@ button {
             &:nth-child(even) {
                 background-color: $table-bg;
             }
+            .orderhistory-results-cancelled {
+                display: none;
+            }
         }
         
         .contentblock__btn {
@@ -533,6 +573,10 @@ button {
                     &:nth-child(6) { order: 5 }
                     &:nth-child(7) { display: none !important; }
 
+                    &.orderhistory-total > span {
+                        display: none;
+                    }
+
                     .orderhistory-info {
                         font-weight: normal;
                         font-size: 18px;
@@ -552,6 +596,10 @@ button {
         @media (min-width: $screen-md-min){
             display: block;
         }
+    }
+
+    &-date-status {
+        text-transform: capitalize;
     }
 
     &-view {
@@ -697,6 +745,10 @@ button {
             top: 8px;
             left: calc(50% - 16px);
         }
+    }
+
+    .js-status {
+        text-transform: uppercase;
     }
 }
 

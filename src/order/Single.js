@@ -8,11 +8,6 @@ import 'intersection-observer';
 // import 'element-closest';
 
 export default class Single extends Component {
-    constructor(props) {
-        super(props);
-        this.mq = window.matchMedia('(min-width: 1024px)');
-        this.msg = new Msg();
-    }
     componentDidMount() {
         const orderHistory = document.getElementById('js-orderhistory');
         const config = {
@@ -37,30 +32,41 @@ export default class Single extends Component {
 
     render() {
         let currStatus;
-        const mq = window.matchMedia('(min-width: 1024px)');
+        this.msg = new Msg();
         const {
             order,
             popItems,
             index,
             orderitem,
             toggleClickHandler,
-            queryParam, results,
-            fetchOrderDetails
+            queryParam,
+            results,
+            fetchOrderDetails,
+            orderDetailsHandler
         } = this.props;
         const {
-            code, guid, orderDetails, fromTnT
+            code, status, guid, orderDetails, fromTnT, statusBar
         } = order;
+        const mq = window.matchMedia('(min-width: 1024px)');
         const statusDisplay = order.statusDisplay ? order.statusDisplay : this.msg.unknown;
-        const showOrderDetails = orderDetails && mq.matches;
+        const showOrderDetails = index < 2 && mq.matches;
         const url = !showOrderDetails ? `/my-account/order/details?code=${code}&guid=${guid}` : '';
         const hasCancelled = orderDetails ? orderDetails.hasCancelled : order.hasCancelled;
-        // statusDisplay = 'Cancelled';
+        const lastStatus = statusBar.reduce((hasArr, arr) => arr.isCurrent, false);
+        const dateStatus = order.isDeliveryDateInFuture ? this.msg.futureMsg : order.estimatedCompletionDate;
+        const DateStatusComp = (props) => {
+            return <div className="orderhistory-date-status">
+                {lastStatus
+                    ? props.shipped : status.code === 'CANCELLED'
+                    ? this.msg.cancel : props.standard} {status.code === 'CANCELLED' ? '' : dateStatus}
+            </div>;
+        };
 
         // Fetch order details is not already available
         code === queryParam.orderitem && !orderDetails
         && fetchOrderDetails(orderDetails, index, url, results);
 
-        return <div className={`orderhistory-list orderhistory-list--${statusDisplay.toLowerCase().replace(/\s/g, '')} ${orderitem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
+        return <div className={`orderhistory-list orderhistory-list--${lastStatus ? 'shipped' : status.code.toLowerCase().replace(/\s/g, '')} ${orderitem && order.code !== queryParam.orderitem ? 'hide' : ''}`}>
             {
                 hasCancelled && <div className="orderhistory-results-cancelled">
                     <i className="cc-icon-fielderror" /><strong>{this.msg.note}</strong> - {this.msg.cancelled_info}
@@ -76,7 +82,7 @@ export default class Single extends Component {
                         <i className="cc-icon pull-left" />
                         <button
                           type="button"
-                          className="js-status btn"
+                          className="js-status"
                           data-order-code={code}
                           data-url={url}
                           data-index={index}
@@ -99,28 +105,34 @@ export default class Single extends Component {
                 </div>
                 <div className="col-xs-12 col-md-2 hidden-md hidden-lg">
                     <span className="orderhistory--list--hide">{this.msg.delDate}</span>
-                    <div className="orderhistory-info">{this.msg.est}: {order.estimatedCompletionDate}</div>
+                    <div className="orderhistory-info">{dateStatus ? this.msg.est : this.msg.awaitingDate} {order.estimatedCompletionDate}</div>
                 </div>
                 <div className="col-xs-12 col-md-2"><span className="hidden-md hidden-lg">{this.msg.orderTotal}</span> <span className="hidden-xs hidden-sm">{this.msg.total}</span>
                     <div className="orderhistory-info">{order.total ? order.total.formattedValue : ''}</div>
                 </div>
                 <div className="col-xs-12 col-md-3 pull-right">
-                    <a className="btn btn-default btn--lg btn-block-xs hidden-xs hidden-sm" href={`/my-account/order/${code}?guid=${guid}`}>{this.msg.orderDetails}</a>
+                    <button
+                      type="button"
+                      className="btn btn-default btn--lg btn-block-xs hidden-xs hidden-sm"
+                      href={`/my-account/order/${code}?guid=${guid}`}
+                      onClick={orderDetailsHandler}
+                    >{this.msg.orderDetails}</button>
                 </div>
             </div>
             <ol className="orderhistory-status">
-                {this.msg.statusBar.map(status => {
+                {statusBar.map((stat, statIndex) => {
+                    const { displayStatus, isCurrent } = stat;
                     return <li
-                      key={`${code}-${status}`}
+                      key={statIndex}
                       className={`orderhistory-status-step
                         ${(() => {
-                            if (statusDisplay === status && !currStatus) {
+                            if (isCurrent) {
                                 currStatus = true;
                                 return 'is-current';
                             }
-                        })()} ${statusDisplay !== status && !currStatus ? 'is-done' : ''}`}
+                        })()} ${!currStatus && !isCurrent ? 'is-done' : ''}`}
                     >
-                        <div className="orderhistory-status-label"><span>{status}</span></div>
+                        <div className="orderhistory-status-label"><span>{displayStatus}</span></div>
                     </li>;
                 })}
             </ol>
@@ -132,15 +144,10 @@ export default class Single extends Component {
                     </div>
                     <div className="col-xs-12">
                         <div className="orderhistory-date">
-                            {(() => {
-                                if (statusDisplay === 'Shipped') {
-                                    return this.msg.shipped;
-                                } else if (statusDisplay === 'Cancelled') {
-                                    return this.msg.cancelled;
-                                } else {
-                                    return this.msg.estDelDate;
-                                }
-                            })()}: {order.isDeliveryDateInFuture ? this.msg.futureMsg : order.estimatedCompletionDate}
+                            {
+                                status.code !== 'CANCELLED'
+                                && <DateStatusComp standard={dateStatus ? this.msg.estDelDate : this.msg.awaitingDate} shipped={this.msg.shippedOn} />
+                            }
                         </div>
                         <button
                           className={`orderhistory-toggle js-orderhistory-toggle pull-right ${orderitem ? 'hide' : ''}`}
@@ -157,9 +164,9 @@ export default class Single extends Component {
                     </div>
                 </div>
             </div>
-            <div className="product-table">
+            <div className={`product-table ${!showOrderDetails ? 'hide' : ''}`}>
                 {
-                    (popItems === index || showOrderDetails)
+                    (popItems === index || orderDetails)
                     && <OrderDetails data={orderDetails} tnt={fromTnT || false} />
                 }
             </div>
@@ -174,6 +181,7 @@ Single.propTypes = {
     index: PropTypes.number.isRequired,
     popItems: PropTypes.number.isRequired,
     queryParam: PropTypes.shape().isRequired,
+    orderDetailsHandler: PropTypes.func.isRequired,
     fetchOrderDetails: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(
         PropTypes.shape().isRequired

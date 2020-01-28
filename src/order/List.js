@@ -10,8 +10,6 @@ import '../scss/Order.scss';
 export default class List extends Component {
     constructor(props) {
         super(props);
-        // Media Query
-        this.mq = window.matchMedia('(min-width: 1024px)');
         this.msg = new Msg();
         // State
         this.state = {
@@ -31,6 +29,19 @@ export default class List extends Component {
         const sort = queryParam.sort ? queryParam.sort : sortValue;
         // httprequest
         this.getData(mode, page, sort, ignorePageNumber);
+    }
+
+    componentDidUpdate() {
+        const { location } = this.props;
+        const { search } = location;
+        const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
+        const { orderitem } = queryParam;
+        const scrollY = sessionStorage.getItem('scrollY');
+        if (orderitem) {
+            window.scrollTo(0, 0);
+        } else if (scrollY) {
+            window.scrollTo(0, scrollY);
+        }
     }
 
     getData = (modeUpdate, currentPageUpdate, sortUpdate, ignorePageNumber) => {
@@ -81,10 +92,17 @@ export default class List extends Component {
                     results: updateResults,
                     popItems: parseInt(index)
                 });
+                sessionStorage.removeItem('scrollY');
             })
             .catch(error => {
                 console.error('Requestfailed', error);
             });
+    }
+
+    orderDetailsHandler = e => {
+        e.preventDefault();
+        sessionStorage.setItem('scrollY', window.pageYOffset);
+        window.location.href = e.target.getAttribute('href');
     }
 
     switchLayoutHandler = e => {
@@ -96,6 +114,7 @@ export default class List extends Component {
         const queryParam = this.updateQueryStringParam(search, 'displayMode', displayMode);
         this.setState({ displayMode });
         history.push({ search: queryParam });
+        sessionStorage.removeItem('scrollY');
     }
 
     sortChangeHandler = e => {
@@ -106,6 +125,7 @@ export default class List extends Component {
         const queryParam = this.updateQueryStringParam(search, 'sort', sortValue);
         this.setState({ disableEvent: true, popItems: -1 });
         history.push({ search: queryParam });
+        sessionStorage.removeItem('scrollY');
         this.getData(displayMode, currentPage, sortValue, true);
     }
 
@@ -118,6 +138,7 @@ export default class List extends Component {
         this.setState({ disableEvent: true, currentPage: currentPage + 1 });
         history.push({ search: queryParam });
         this.getData(displayMode, currentPage + 1, sortValue, false);
+        sessionStorage.removeItem('scrollY');
     }
 
     backToListHandler = () => {
@@ -125,6 +146,7 @@ export default class List extends Component {
         const { history } = this.props;
         history.goBack();
         mq.matches && this.setState({ displayMode: 'list' });
+        sessionStorage.removeItem('scrollY');
     }
 
     toggleClickHandler = e => {
@@ -152,7 +174,7 @@ export default class List extends Component {
             tar.dataset.moreLess = currMsg;
             icon.classList.toggle('cc-icon-close_m');
             icon.classList.toggle('cc-icon-open_m');
-            orderDetails && details.classList.toggle('hide');
+            details.classList.toggle('hide');
         }
 
         this.fetchOrderDetails(orderDetails, index, url, results);
@@ -243,8 +265,8 @@ export default class List extends Component {
                             </label>
                         </div>
                         <button
-                          onClick={this.backToListHandler}
                           type="button"
+                          onClick={this.backToListHandler}
                           className="orderhistory-back js-orderhistory-back"
                         >
                             <i className="cc-icon-caretleft_b" />{this.msg.backToList}
@@ -270,6 +292,7 @@ export default class List extends Component {
                                     orderitem,
                                     queryParam,
                                     results,
+                                    orderDetailsHandler: this.orderDetailsHandler,
                                     toggleClickHandler: this.toggleClickHandler,
                                     fetchOrderDetails: this.fetchOrderDetails
                                 };

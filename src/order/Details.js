@@ -4,12 +4,8 @@ import PropTypes from 'prop-types';
 import Msg from '../Messages';
 
 export default class Details extends Component {
-    constructor(){
-        super();
-        this.msg = new Msg();
-    }
-
     render() {
+        this.msg = new Msg();
         const { data } = this.props;
         const { unconsignedEntries, consignments } = data;
 
@@ -22,7 +18,7 @@ export default class Details extends Component {
                         } = entry;
                         const href = product.purchasable && product.url;
                         const img = product.images && product.images[0];
-                        const url = img && img.url;
+                        const url = img ? img.url : this.msg.missingProductImage;
                         const altText = img && img.altText;
                         return <div className="product-table__item row" key={product.code}>
                             <div className="product-table__item-white col-xs-12 col-md-9">
@@ -50,19 +46,21 @@ export default class Details extends Component {
 
         const ConsignmentComp = () => {
             return consignments.map((entry, index) => {
-                const { entries, showTrackPackage, courierUrl } = entry;
-                const statusDisplay = entries.statusDisplay ? entries.statusDisplay : this.msg.unknown;
-
+                const {
+                    status, entries, showTrackPackage, courierUrl
+                } = entry;
+                const statusDisplay = entry.statusDisplay ? entry.statusDisplay : this.msg.unknown;
                 return <div className="product-table__consignment" key={index}>
                     <div className="product-table__item row">
                         { entries.map(list => {
                             const { quantity, shippedQuantity, orderEntry } = list;
                             const { product, cancelled } = orderEntry;
                             const href = product.purchasable && product.url;
-                            const img = product.images[0];
-                            const { url, altText } = img;
+                            const img = product.images && product.images[0];
+                            const url = img ? img.url : this.msg.missingProductImage;
+                            const altText = img && img.altText;
                             return <div key={product.code} className="product-table__item-white col-xs-12 col-md-9">
-                                {cancelled ? <div className="product-table__item--cancelled" /> : ''}
+                                {cancelled || (status && status.code === 'CANCELLED') ? <div className="product-table__item--cancelled" /> : ''}
                                 <div className="col-xs-12 row">
                                     <div className="product-table__item-image product-table__item-image--alt col-xs-4 col-md-3">
                                         <a href={href}>

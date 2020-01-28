@@ -44,5 +44,6 @@ export default class Messages {
         this.unknown = 'Awaiting Status';
         this.note = 'PLEASE NOTE';
         this.cancelled_info = 'this order contains some cancelled items';
+        this.missingProductImage = './images/missing_product_EN_300x300.jpg';
     }
 }
