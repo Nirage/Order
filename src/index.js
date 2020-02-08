@@ -13,13 +13,7 @@ import 'promise-polyfill/src/polyfill';
 class Order extends Component {
     constructor(props) {
         super(props);
-        this.d = document;
-        this.b = this.d.body;
-        this.orderHistory = this.d.getElementById('js-orderhistory');
-        this.msg = this.orderHistory && this.orderHistory.msg;
-        this.orderResults = this.b.querySelector('.orderhistory-results');
-        this.switchLayout = this.b.querySelectorAll('.js-orderhistory-view button');
-        this.back = this.b.querySelector('.js-orderhistory-back');
+        this.orderHistory = document.getElementById('js-orderhistory');
         // State initialise
         this.state = {
             isLoading: false,
