@@ -41,8 +41,9 @@ export default class Single extends Component {
             toggleClickHandler,
             queryParam,
             results,
-            fetchOrderDetails,
-            orderDetailsHandler
+            orderDetailsHandler,
+            openDetails,
+            fetchOrderDetails
         } = this.props;
         const {
             code, status, guid, orderDetails, fromTnT, statusBar
@@ -61,6 +62,11 @@ export default class Single extends Component {
                     ? this.msg.cancel : props.standard} {status.code === 'CANCELLED' ? '' : dateStatus}
             </div>;
         };
+
+        // statusDisplay = 'Cancelled';
+        // status.code = 'CANCELLED';
+
+        console.log(openDetails, orderDetails);
 
         // Fetch order details is not already available
         code === queryParam.orderitem && !orderDetails
@@ -107,7 +113,7 @@ export default class Single extends Component {
                     <span className="orderhistory--list--hide">{this.msg.delDate}</span>
                     <div className="orderhistory-info">{dateStatus ? this.msg.est : this.msg.awaitingDate} {order.estimatedCompletionDate}</div>
                 </div>
-                <div className="col-xs-12 col-md-2"><span className="hidden-md hidden-lg">{this.msg.orderTotal}</span> <span className="hidden-xs hidden-sm">{this.msg.total}</span>
+                <div className="orderhistory-total col-xs-12 col-md-2"><span className="hidden-md hidden-lg">{this.msg.orderTotal}</span> <span className="hidden-xs hidden-sm">{this.msg.total}</span>
                     <div className="orderhistory-info">{order.total ? order.total.formattedValue : ''}</div>
                 </div>
                 <div className="col-xs-12 col-md-3 pull-right">
@@ -185,6 +191,9 @@ Single.propTypes = {
     fetchOrderDetails: PropTypes.func.isRequired,
     results: PropTypes.arrayOf(
         PropTypes.shape().isRequired
+    ).isRequired,
+    openDetails: PropTypes.arrayOf(
+        PropTypes.string.isRequired
     ).isRequired
 };
 

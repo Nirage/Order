@@ -14,41 +14,53 @@ export default class List extends Component {
         // State
         this.state = {
             results: [],
-            popItems: -1
+            popItems: -1,
+            openDetails: [],
+            ignorePageNumber: true
         };
     }
 
     componentDidMount() {
-        const {
-            displayMode, currentPage, sortValue, ignorePageNumber, location
-        } = this.props;
+        this.getData();
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.location) {
+            if (nextProps.location.search !== prevState.location.search) return;
+        }
+        return null;
+    }
+
+    componentDidUpdate(prevProps) {
+        const { location } = this.props;
+        const currPropsParam = qs.parse(location.search, { ignoreQueryPrefix: true });
+        const prevPropsParam = qs.parse(prevProps.location.search, { ignoreQueryPrefix: true });
+        const scrollY = sessionStorage.getItem('scrollY');
+        // Only fetch data if page OR sort values are different
+        if (prevPropsParam.page !== currPropsParam.page || prevPropsParam.sort !== currPropsParam.sort) {
+            // Param page values can be different in orderitem
+            if (currPropsParam.orderitem === prevPropsParam.orderitem) {
+                this.getData();
+                window.scrollTo(0, 0);
+            } else if (scrollY) {
+                window.scrollTo(0, scrollY);
+            }
+        }
+    }
+
+    getData = () => {
+        const { displayMode, ignorePageNumber } = this.state;
+        const { currentPage, sortValue, location } = this.props;
         const { search } = location;
         const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
         const mode = queryParam.displayMode ? queryParam.displayMode : displayMode;
         const page = queryParam.page ? queryParam.page : currentPage;
         const sort = queryParam.sort ? queryParam.sort : sortValue;
-        // httprequest
-        this.getData(mode, page, sort, ignorePageNumber);
-    }
 
-    componentDidUpdate() {
-        const { location } = this.props;
-        const { search } = location;
-        const queryParam = qs.parse(search, { ignoreQueryPrefix: true });
-        const { orderitem } = queryParam;
-        const scrollY = sessionStorage.getItem('scrollY');
-        if (orderitem) {
-            window.scrollTo(0, 0);
-        } else if (scrollY) {
-            window.scrollTo(0, scrollY);
-        }
-    }
-
-    getData = (modeUpdate, currentPageUpdate, sortUpdate, ignorePageNumber) => {
         const param = {
-            displayMode: modeUpdate,
-            page: currentPageUpdate,
-            sort: sortUpdate,
+            displayMode: mode,
+            page,
+            sort,
             ignorePageNumber
         };
 
@@ -56,19 +68,19 @@ export default class List extends Component {
             .then(response => response.json())
             .then(data => {
                 const { results, sorts, pagination } = data;
-                const { currentPage, pageSize, totalNumberOfResults } = pagination;
+                const { pageSize, totalNumberOfResults } = pagination;
                 this.setState(prevState => ({
                     isLoading: true,
                     disableEvent: false,
                     results: param.ignorePageNumber ? results : prevState.results.concat(results),
-                    displayMode: modeUpdate,
+                    displayMode: mode,
                     sorts,
-                    sortValue: sortUpdate,
-                    currentPage,
+                    sortValue: sort,
+                    currentPage: pagination.currentPage,
                     pageSize,
                     totalNumberOfResults
                 }));
-                console.log(data);
+                console.log(this.state);
             })
             .catch(error => {
                 console.error('Requestfailed', error);
@@ -119,25 +131,22 @@ export default class List extends Component {
 
     sortChangeHandler = e => {
         const sortValue = e.target.value;
-        const { displayMode, currentPage } = this.state;
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = this.updateQueryStringParam(search, 'sort', sortValue);
         this.setState({ disableEvent: true, popItems: -1 });
         history.push({ search: queryParam });
         sessionStorage.removeItem('scrollY');
-        this.getData(displayMode, currentPage, sortValue, true);
     }
 
     loadmoreHandler = e => {
         e.preventDefault();
-        const { displayMode, currentPage, sortValue } = this.state;
+        const { currentPage } = this.state;
         const { history, location } = this.props;
         const { search } = location;
         const queryParam = this.updateQueryStringParam(search, 'page', currentPage + 1);
         this.setState({ disableEvent: true, currentPage: currentPage + 1 });
         history.push({ search: queryParam });
-        this.getData(displayMode, currentPage + 1, sortValue, false);
         sessionStorage.removeItem('scrollY');
     }
 
@@ -152,15 +161,15 @@ export default class List extends Component {
     toggleClickHandler = e => {
         e.preventDefault();
         const tar = e.target.closest('button');
-        const { results, currentPage } = this.state;
-        const { index } = tar.dataset;
+        const { results, currentPage, openDetails } = this.state;
+        const { index, orderCode } = tar.dataset;
         const { code, guid, orderDetails } = results[parseInt(index)];
         const url = `/my-account/order/details?code=${code}&guid=${guid}`;
         // Status Button
         if (tar.classList.contains('js-status')) {
             const { history } = this.props;
             const queryParam = {
-                orderitem: tar.dataset.orderCode,
+                orderitem: orderCode,
                 page: currentPage
             };
             history.push({ search: qs.stringify(queryParam) });
@@ -175,6 +184,7 @@ export default class List extends Component {
             icon.classList.toggle('cc-icon-close_m');
             icon.classList.toggle('cc-icon-open_m');
             details.classList.toggle('hide');
+            this.setState({ openDetails: openDetails.concat(orderCode) });
         }
 
         this.fetchOrderDetails(orderDetails, index, url, results);
@@ -194,6 +204,7 @@ export default class List extends Component {
             isLoading,
             popItems,
             results,
+            openDetails,
             totalNumberOfResults,
             currentPage,
             pageSize,
@@ -267,10 +278,11 @@ export default class List extends Component {
                         <button
                           type="button"
                           onClick={this.backToListHandler}
-                          className="orderhistory-back js-orderhistory-back"
-                        >
-                            <i className="cc-icon-caretleft_b" />{this.msg.backToList}
-                        </button>
+                          className="cc-icon-list"
+                          data-display-mode="list"
+                          aria-label="list"
+                          title={this.msg.listview}
+                        />
                     </div>
                     <div className="hidden-xs hidden-sm well clearfix orderhistory--list-header">
                         <div className="col-md-2">{this.msg.orderNo}</div>
@@ -293,6 +305,7 @@ export default class List extends Component {
                                     queryParam,
                                     results,
                                     orderDetailsHandler: this.orderDetailsHandler,
+                                    openDetails,
                                     toggleClickHandler: this.toggleClickHandler,
                                     fetchOrderDetails: this.fetchOrderDetails
                                 };
